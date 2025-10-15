@@ -1,0 +1,487 @@
+# List available commands
+default:
+    @just --list
+
+# Run the application in development mode
+run:
+    cargo run
+
+# Run with auto-reload using cargo-watch
+dev:
+    cargo watch -x run
+
+# Run with verbose logging (debug level)
+dev-verbose:
+    RUST_LOG=debug,tower_http=trace,sqlx=debug cargo watch -x run
+
+# Run with trace logging (everything)
+dev-trace:
+    RUST_LOG=trace cargo watch -x run
+
+# Build the project in release mode
+build:
+    cargo build --release
+
+# Run all tests (uses nextest if available, otherwise cargo test)
+test:
+    @if command -v cargo-nextest >/dev/null 2>&1; then \
+        cargo nextest run; \
+    else \
+        cargo test; \
+    fi
+
+# Run tests with cargo test (standard)
+test-standard:
+    cargo test
+
+# Run tests with output visible
+test-verbose:
+    cargo test -- --nocapture --test-threads=1
+
+# Run only unit tests (lib tests)
+test-unit:
+    cargo test --lib
+
+# Run only integration tests
+test-integration:
+    cargo test --test '*'
+
+# Run tests with coverage (requires cargo-tarpaulin)
+test-coverage:
+    cargo tarpaulin --out Html --output-dir coverage
+
+# Format code
+fmt:
+    cargo fmt
+
+# Check code formatting without making changes
+fmt-check:
+    cargo fmt -- --check
+
+# Quick compile check (fastest)
+check-fast:
+    cargo check --lib
+
+# Check without running clippy (faster than full check)
+check-quick:
+    cargo check --all-targets
+
+# Run clippy linter
+lint:
+    cargo clippy --all-targets --all-features -- -D warnings
+
+# Run all checks (format, lint, test)
+check:
+    @echo "→ Checking formatting..."
+    cargo fmt -- --check
+    @echo "→ Running clippy..."
+    cargo clippy --all-targets --all-features -- -D warnings
+    @echo "→ Running tests..."
+    cargo test
+    @echo "✓ All checks passed!"
+
+# Security audit (requires cargo-audit)
+audit:
+    cargo audit
+
+# Check dependencies for issues (requires cargo-deny)
+deny:
+    cargo deny check
+
+# Clean build artifacts
+clean:
+    cargo clean
+
+# Start Docker services
+docker-up:
+    docker-compose up -d
+
+# Stop Docker services
+docker-down:
+    docker-compose down
+
+# View Docker logs
+docker-logs:
+    docker-compose logs -f
+
+# Setup database (create and run migrations)
+db-setup:
+    diesel setup
+
+# Reset database (drop and recreate)
+db-reset:
+    diesel database reset
+
+# Fresh database: drop, recreate, migrate, and seed
+db-fresh: db-reset db-migrate db-seed
+    @echo "✓ Fresh database ready with test data!"
+
+# Complete dev reset: fresh DB and restart server
+dev-reset: db-fresh
+    @echo "✓ Starting server with fresh database..."
+    cargo run
+
+# Run database migrations
+db-migrate:
+    diesel migration run
+
+# Revert last database migration
+db-revert:
+    diesel migration revert
+
+# Generate a new migration (usage: just db-gen create_users)
+db-gen name:
+    diesel migration generate {{name}}
+
+# Seed the database with test data
+db-seed:
+    cargo run --bin seed
+
+# Install development tools
+install-tools:
+    cargo install cargo-watch
+    cargo install cargo-nextest
+    cargo install cargo-tarpaulin
+    cargo install cargo-audit
+    cargo install cargo-deny
+    cargo install cargo-outdated
+    cargo install cargo-flamegraph
+    cargo install diesel_cli --no-default-features --features postgres
+    @echo "✓ All development tools installed!"
+
+# Quick development setup: start Docker, setup DB, run migrations
+setup: docker-up db-setup db-migrate
+    @echo "✓ Development environment ready!"
+
+# Full cleanup: stop Docker, clean artifacts
+teardown: docker-down clean
+    @echo "✓ Environment cleaned up!"
+
+# Run the application with production environment
+run-prod:
+    ENVIRONMENT=production cargo run --release
+
+# Watch and run tests on file changes
+test-watch:
+    cargo watch -x test
+
+# Check compilation without building
+check-compile:
+    cargo check --all-targets --all-features
+
+# Generate and open documentation
+docs:
+    cargo doc --no-deps --open
+
+# Show build timings
+timings:
+    cargo build --timings --release
+
+# Validate environment variables
+env-check:
+    @echo "Checking required environment variables..."
+    @test -n "$$DATABASE_URL" || (echo "❌ DATABASE_URL not set" && exit 1)
+    @test -n "$$JWT_SECRET" || (echo "❌ JWT_SECRET not set" && exit 1)
+    @echo "✓ All required environment variables are set"
+
+# Show database connection info
+db-info:
+    @echo "Database URL: $$DATABASE_URL"
+    @echo "Pool size: $${DATABASE_POOL_SIZE:-10}"
+
+# Watch and auto-restart on file changes with clean logs
+dev-watch:
+    cargo watch -q -c -x run
+
+# Watch with full OpenTelemetry tracing (for debugging spans)
+dev-watch-otel:
+    OTEL=1 cargo watch -q -c -x run
+
+# Watch with SQL query logging enabled
+dev-queries:
+    QUERY_LOG=1 cargo watch -q -c -x run
+
+# Watch with verbose HTTP request/response logging
+dev-verbose-http:
+    VERBOSE_HTTP=1 cargo watch -q -c -x run
+
+# Watch specific file/module and restart
+watch-file file:
+    cargo watch -q -c -w {{file}} -x run
+
+# Watch tests on file changes
+test-watch-quiet:
+    cargo watch -q -c -x test
+
+# Quick smoke test (fast compile check + migrations + one quick test)
+smoke:
+    @echo "→ Quick compile check..."
+    @cargo check --lib --quiet
+    @echo "→ Running migrations..."
+    @diesel migration run
+    @echo "→ Running smoke test..."
+    @cargo test health_test --lib -- --nocapture
+    @echo "✓ Smoke test passed!"
+
+# Profile build times
+profile-build:
+    cargo build --timings --release
+    @echo "Open target/cargo-timings/cargo-timing.html to view results"
+
+# Quick development loop: format, check, test (no clippy)
+quick-check:
+    @echo "→ Formatting code..."
+    @cargo fmt
+    @echo "→ Quick compile check..."
+    @cargo check --lib
+    @echo "→ Running tests..."
+    @cargo test --lib -- --test-threads=1
+    @echo "✓ Quick check complete!"
+
+# Start postgres and run server with clean state
+fresh-start: docker-up db-fresh
+    @echo "✓ Starting server..."
+    cargo run
+
+# Fresh DB + watch mode (best of both worlds)
+dev-fresh: db-fresh
+    @echo "✓ Database reset, starting watch mode..."
+    cargo watch -q -c -x run
+
+# Nuclear option: clean everything and start fresh
+nuke: docker-down clean
+    @echo "💥 Nuking everything..."
+    rm -rf target/
+    @echo "✓ Everything nuked. Run 'just setup' to start fresh"
+
+# Check for outdated dependencies
+deps-outdated:
+    @command -v cargo-outdated >/dev/null 2>&1 || (echo "Installing cargo-outdated..." && cargo install cargo-outdated)
+    cargo outdated --workspace
+
+# Interactive database REPL
+repl:
+    @diesel migration run || true
+    @psql $(shell grep DATABASE_URL .env 2>/dev/null | cut -d '=' -f2 || echo $$DATABASE_URL)
+
+# Database REPL with helpful commands displayed
+db-explore:
+    @echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    @echo "📊 Database Explorer"
+    @echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    @echo "Useful commands:"
+    @echo "  \\dt              - list all tables"
+    @echo "  \\d table_name    - describe table"
+    @echo "  \\l               - list databases"
+    @echo "  \\q               - quit"
+    @echo ""
+    @echo "Quick queries:"
+    @echo "  SELECT * FROM users LIMIT 5;"
+    @echo "  SELECT COUNT(*) FROM users;"
+    @echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    @echo ""
+    @diesel migration run || true
+    @psql $(shell grep DATABASE_URL .env 2>/dev/null | cut -d '=' -f2 || echo $$DATABASE_URL)
+
+# Snapshot the current database state
+db-snapshot name:
+    @echo "📸 Creating database snapshot: {{name}}"
+    @mkdir -p .db-snapshots
+    @pg_dump $(shell grep DATABASE_URL .env 2>/dev/null | cut -d '=' -f2 || echo $$DATABASE_URL) > .db-snapshots/{{name}}.sql
+    @echo "✓ Snapshot saved to .db-snapshots/{{name}}.sql"
+
+# Restore a database snapshot
+db-restore name:
+    @echo "♻️  Restoring database snapshot: {{name}}"
+    @test -f .db-snapshots/{{name}}.sql || (echo "❌ Snapshot not found: {{name}}" && exit 1)
+    @diesel database reset --locked-schema
+    @psql $(shell grep DATABASE_URL .env 2>/dev/null | cut -d '=' -f2 || echo $$DATABASE_URL) < .db-snapshots/{{name}}.sql
+    @echo "✓ Database restored from {{name}}"
+
+# List all available database snapshots
+db-snapshots:
+    @echo "Available database snapshots:"
+    @ls -lh .db-snapshots/ 2>/dev/null || echo "No snapshots found. Create one with: just db-snapshot <name>"
+
+# Generate flamegraph for performance profiling (requires cargo-flamegraph)
+flamegraph:
+    @command -v cargo-flamegraph >/dev/null 2>&1 || (echo "Installing cargo-flamegraph..." && cargo install flamegraph)
+    cargo flamegraph --dev
+
+# Generate and open flamegraph
+profile: flamegraph
+    @echo "Opening flamegraph..."
+    @open flamegraph.svg 2>/dev/null || xdg-open flamegraph.svg 2>/dev/null || echo "Open flamegraph.svg manually"
+
+# View logs with formatting (requires bunyan: npm install -g bunyan)
+logs:
+    @if command -v bunyan >/dev/null 2>&1; then \
+        tail -f tracing_test_output.log | bunyan; \
+    else \
+        tail -f tracing_test_output.log; \
+    fi
+
+# Show only errors and warnings from logs
+errors:
+    @if [ -f tracing_test_output.log ]; then \
+        grep -i "error\|warn" tracing_test_output.log | tail -50; \
+    else \
+        echo "No log file found at tracing_test_output.log"; \
+    fi
+
+# Show recent error logs with context
+errors-context:
+    @if [ -f tracing_test_output.log ]; then \
+        grep -i -B 2 -A 2 "error\|warn" tracing_test_output.log | tail -100; \
+    else \
+        echo "No log file found at tracing_test_output.log"; \
+    fi
+
+# Follow logs and filter for errors only
+watch-errors:
+    @if [ -f tracing_test_output.log ]; then \
+        tail -f tracing_test_output.log | grep -i --line-buffered "error\|warn"; \
+    else \
+        echo "No log file found. Run the server first."; \
+    fi
+
+# Trace a specific request by request ID through logs
+logs-request id:
+    @echo "Searching for request ID: {{id}}"
+    @if [ -f tracing_test_output.log ]; then \
+        grep "{{id}}" tracing_test_output.log | head -100 || echo "No logs found for request ID: {{id}}"; \
+    else \
+        echo "No log file found at tracing_test_output.log"; \
+    fi
+
+# Check prerequisites and system health
+doctor:
+    @echo "🏥 Checking development environment..."
+    @echo ""
+    @echo "Rust toolchain:"
+    @rustc --version || echo "  ❌ rustc not found"
+    @cargo --version || echo "  ❌ cargo not found"
+    @echo ""
+    @echo "Required tools:"
+    @diesel --version 2>/dev/null || echo "  ❌ diesel_cli not installed (run: just install-tools)"
+    @docker --version 2>/dev/null || echo "  ❌ docker not found"
+    @psql --version 2>/dev/null || echo "  ⚠️  psql not found (optional)"
+    @echo ""
+    @echo "Optional tools:"
+    @cargo-watch --version 2>/dev/null || echo "  ⚠️  cargo-watch not installed (run: just install-tools)"
+    @cargo-outdated --version 2>/dev/null || echo "  ⚠️  cargo-outdated not installed"
+    @echo ""
+    @echo "Environment variables:"
+    @test -n "$$DATABASE_URL" && echo "  ✓ DATABASE_URL is set" || echo "  ⚠️  DATABASE_URL not set"
+    @test -n "$$JWT_SECRET" && echo "  ✓ JWT_SECRET is set" || echo "  ⚠️  JWT_SECRET not set"
+    @echo ""
+    @if docker ps >/dev/null 2>&1; then \
+        echo "Docker status: ✓ Running"; \
+    else \
+        echo "Docker status: ❌ Not running or not accessible"; \
+    fi
+    @echo ""
+    @echo "Database connectivity:"
+    @psql $$DATABASE_URL -c "SELECT version();" 2>/dev/null && echo "  ✓ Database accessible" || echo "  ❌ Cannot connect to database"
+
+# Quick health check of running server
+health-check:
+    @echo "Checking server health..."
+    @curl -s http://localhost:8080/api/v1/health | jq . || echo "❌ Server not responding at http://localhost:8080"
+
+# Quick HTTP API test using requests.http (requires httpyac or rest-client)
+api-test:
+    @echo "Use VS Code REST Client extension with requests.http"
+    @echo "Or run: httpyac send requests.http"
+
+# Generate coverage report and open in browser
+coverage-view: test-coverage
+    @echo "Opening coverage report..."
+    open coverage/index.html || xdg-open coverage/index.html
+
+# Benchmark with cargo bench
+bench:
+    cargo bench
+
+# Quick HTTP benchmark using oha (install with: cargo install oha)
+benchmark endpoint="/api/v1/health" duration="10s":
+    @command -v oha >/dev/null 2>&1 || (echo "📦 Installing oha..." && cargo install oha)
+    @echo "🚀 Benchmarking {{endpoint}} for {{duration}}..."
+    @echo "Ensure server is running at http://localhost:8080"
+    oha -z {{duration}} -c 100 --latency-correction --disable-keepalive http://localhost:8080{{endpoint}}
+
+# Benchmark with custom concurrency level
+benchmark-custom endpoint="/api/v1/health" duration="10s" concurrency="50":
+    @command -v oha >/dev/null 2>&1 || (echo "📦 Installing oha..." && cargo install oha)
+    @echo "🚀 Benchmarking {{endpoint}} for {{duration}} with {{concurrency}} concurrent connections..."
+    @echo "Ensure server is running at http://localhost:8080"
+    oha -z {{duration}} -c {{concurrency}} --latency-correction --disable-keepalive http://localhost:8080{{endpoint}}
+
+# Show all env vars being used
+show-env:
+    @echo "Current environment configuration:"
+    @echo "HOST=$${HOST:-0.0.0.0}"
+    @echo "PORT=$${PORT:-8080}"
+    @echo "ENVIRONMENT=$${ENVIRONMENT:-development}"
+    @echo "DATABASE_URL=$${DATABASE_URL}"
+    @echo "JWT_EXPIRATION_HOURS=$${JWT_EXPIRATION_HOURS:-24}"
+    @echo "RUST_LOG=$${RUST_LOG:-info}"
+
+# Watch tests for a specific module
+watch-test module:
+    cargo watch -q -c -x "test {{module}} -- --nocapture"
+
+# Verify migrations can roll back and forward
+db-test-migrations:
+    @echo "→ Testing migrations..."
+    @diesel migration run
+    @diesel migration revert
+    @diesel migration run
+    @echo "✓ Migrations verified"
+
+# ============================================================================
+# Workflow Shortcuts (for daily development)
+# ============================================================================
+
+# Daily workflow: format, quick check, unit tests
+daily: fmt check-quick test-unit
+    @echo "✓ Daily checks passed!"
+
+# Pre-commit workflow: format, lint, all tests
+pre-commit: fmt lint test
+    @echo "✓ Ready to commit!"
+
+# Full validation: all checks, tests, and security audit
+full: check test audit
+    @echo "✓ Full validation passed!"
+
+# Instant feedback loop: compile check only (fastest)
+instant:
+    @cargo watch -q -c -w src -x 'check --lib' -s 'echo "✓ Compiled"'
+
+# Install git hooks for pre-commit checks
+install-hooks:
+    @echo "Installing git hooks..."
+    @git config core.hooksPath .githooks
+    @echo "✓ Git hooks installed (.githooks/pre-commit will run on commits)"
+    @echo "  To skip hooks temporarily: git commit --no-verify"
+
+# Quick feedback loop: format, check changed files, test
+quick:
+    @echo "→ Running quick validation..."
+    @cargo fmt --quiet
+    @cargo check --lib --quiet
+    @cargo test --lib --quiet
+    @echo "✓ Quick validation passed"
+
+# Generate OpenAPI spec and save to file
+openapi:
+    @echo "→ Generating OpenAPI spec..."
+    @cargo run --bin openapi > openapi.json
+    @echo "✓ OpenAPI spec saved to openapi.json"
+
+# Generate OpenAPI spec for frontend consumption
+openapi-frontend:
+    @echo "→ Generating OpenAPI spec for frontend..."
+    @cargo run --bin openapi > ../frontend/openapi.json
+    @echo "✓ OpenAPI spec saved to ../frontend/openapi.json"

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+echo ""
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# Format code
+echo "→ Formatting code..."
+cargo fmt || {
+    echo "❌ Formatting failed"
+    exit 1
+}
+
+# Quick compile check
+echo "→ Running quick compile check..."
+cargo check --lib --quiet || {
+    echo "❌ Compilation check failed"
+    exit 1
+}
+
+# Run tests
+echo "→ Running tests..."
+cargo test --lib --quiet -- --test-threads=1 || {
+    echo "❌ Tests failed"
+    exit 1
+}
+
+echo ""
+echo "✅ All pre-commit checks passed!"
+echo ""

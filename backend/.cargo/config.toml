@@ -1,0 +1,51 @@
+[build]
+# Use all CPU cores for compilation
+jobs = -1
+# Incremental compilation (enabled by default in dev)
+incremental = true
+# Enable pipelining to overlap compilation of dependencies
+pipelining = true
+
+# Optimize dependencies even in dev builds for better runtime performance
+# This compiles YOUR code fast but dependencies with optimizations
+[profile.dev.package."*"]
+opt-level = 3
+
+# Override for build scripts - compile them optimized
+[profile.dev.build-override]
+opt-level = 3
+
+[alias]
+# Useful cargo aliases
+check-all = "check --all-targets --all-features"
+clippy-all = "clippy --all-targets --all-features -- -D warnings"
+test-all = "test --all-features"
+fmt-check = "fmt -- --check"
+
+# Development aliases
+dev = "watch -x run"
+dev-check = "watch -x check"
+c = "check --lib"
+
+# Faster linker configurations
+# Uncomment the section for your platform to speed up linking:
+
+# Linux (using mold - fastest, install with: apt install mold or cargo install mold)
+# [target.x86_64-unknown-linux-gnu]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+# Linux (using lld as fallback if mold not available)
+# Uncomment if you have lld installed (sudo apt install lld)
+# [target.x86_64-unknown-linux-gnu]
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# macOS (using zld - install with: brew install zld)
+# [target.x86_64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld"]
+# [target.aarch64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
+
+# Windows (using lld-link)
+# [target.x86_64-pc-windows-msvc]
+# linker = "rust-lld"

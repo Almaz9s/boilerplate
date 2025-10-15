@@ -1,0 +1,14 @@
+---
+source: tests/snapshot_test.rs
+assertion_line: 113
+expression: auth_response
+---
+{
+  "token": "[jwt-token]",
+  "user": {
+    "created_at": "[timestamp]",
+    "email": "test@example.com",
+    "id": "00000000-0000-0000-0000-000000000001",
+    "username": "testuser"
+  }
+}

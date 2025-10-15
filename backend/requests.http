@@ -1,0 +1,194 @@
+###
+# Backend API Testing
+#
+# This file contains HTTP requests for testing your API endpoints.
+# Use the REST Client extension in VS Code to execute these requests.
+#
+# Install: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+###
+
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Variables (update these after registration/login)
+@token = your-jwt-token-here
+@userId = your-user-id-here
+
+###############################################################################
+# Health & Metrics
+###############################################################################
+
+### Health Check
+GET {{baseUrl}}/api/v1/health
+
+### Metrics
+GET {{baseUrl}}/metrics
+
+### Swagger UI (open in browser)
+# http://localhost:8080/swagger-ui
+
+###############################################################################
+# Authentication
+###############################################################################
+
+### Register a new user
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "username": "testuser",
+  "password": "SecurePassword123!"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "SecurePassword123!"
+}
+
+### Extract token from login response
+@authToken = {{login.response.body.token}}
+
+### Get current user (authenticated)
+GET {{baseUrl}}/api/v1/auth/me
+Authorization: Bearer {{authToken}}
+
+###############################################################################
+# Development Endpoints (only available in debug builds)
+###############################################################################
+
+### Dev - Check application state
+GET {{baseUrl}}/dev/state
+
+### Dev - Health check
+GET {{baseUrl}}/dev/health
+
+### Dev - Echo test
+POST {{baseUrl}}/dev/echo
+Content-Type: {{contentType}}
+
+{
+  "test": "data",
+  "nested": {
+    "key": "value"
+  },
+  "array": [1, 2, 3]
+}
+
+### Dev - Generate test JWT token
+POST {{baseUrl}}/dev/token
+
+### Dev - Simulate 404 error
+GET {{baseUrl}}/dev/error/not_found
+
+### Dev - Simulate 400 error
+GET {{baseUrl}}/dev/error/bad_request
+
+### Dev - Simulate 401 error
+GET {{baseUrl}}/dev/error/unauthorized
+
+### Dev - Simulate 500 error
+GET {{baseUrl}}/dev/error/internal
+
+### Dev - Simulate database error
+GET {{baseUrl}}/dev/error/database
+
+### Dev - List available error types
+GET {{baseUrl}}/dev/error/unknown
+
+###############################################################################
+# Examples for Testing Error Cases
+###############################################################################
+
+### Invalid registration (duplicate user)
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "username": "testuser",
+  "password": "password123"
+}
+
+### Invalid login credentials
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com",
+  "password": "wrongpassword"
+}
+
+### Unauthorized access (no token)
+GET {{baseUrl}}/api/v1/auth/me
+
+### Unauthorized access (invalid token)
+GET {{baseUrl}}/api/v1/auth/me
+Authorization: Bearer invalid.jwt.token
+
+###############################################################################
+# Performance Testing
+###############################################################################
+
+### Quick sequential test (register -> login -> me)
+# @name perfTest
+
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "perf{{$timestamp}}@example.com",
+  "username": "perfuser{{$timestamp}}",
+  "password": "TestPassword123!"
+}
+
+###
+
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "{{perfTest.request.body.email}}",
+  "password": "TestPassword123!"
+}
+
+###############################################################################
+# Batch Testing
+###############################################################################
+
+### Create multiple test users
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user1-{{$timestamp}}@test.com",
+  "username": "user1_{{$timestamp}}",
+  "password": "Password123!"
+}
+
+###
+
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user2-{{$timestamp}}@test.com",
+  "username": "user2_{{$timestamp}}",
+  "password": "Password123!"
+}
+
+###
+
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user3-{{$timestamp}}@test.com",
+  "username": "user3_{{$timestamp}}",
+  "password": "Password123!"
+}

@@ -1,0 +1,19 @@
+---
+source: tests/snapshot_test.rs
+assertion_line: 44
+expression: users
+---
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "email": "user1@example.com",
+    "username": "user1",
+    "created_at": "[timestamp]"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "email": "user2@example.com",
+    "username": "user2",
+    "created_at": "[timestamp]"
+  }
+]

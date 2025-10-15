@@ -1,0 +1,24 @@
+---
+source: tests/snapshot_test.rs
+assertion_line: 95
+expression: health_response
+---
+{
+  "checks": {
+    "database": {
+      "details": {
+        "available_connections": "[dynamic]",
+        "max_connections": 10
+      },
+      "status": "healthy"
+    },
+    "memory": {
+      "details": {
+        "memory_usage_mb": "[dynamic]"
+      },
+      "status": "healthy"
+    }
+  },
+  "status": "healthy",
+  "version": "0.1.0"
+}

@@ -1,0 +1,49 @@
+# Rustfmt configuration for consistent code formatting
+
+# Maximum width of each line
+max_width = 100
+
+# Maximum width of the args of a function call before falling back to vertical formatting
+fn_call_width = 80
+
+# Maximum width of the args of a function declaration before falling back to vertical formatting
+fn_params_layout = "Tall"
+
+# Maximum width in a chain to fit on a single line
+chain_width = 60
+
+# How to indent
+hard_tabs = false
+tab_spaces = 4
+
+# Group imports
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+
+# Reorder imports
+reorder_imports = true
+
+# Reorder modules
+reorder_modules = true
+
+# Remove trailing whitespace
+trim_trailing_whitespace = true
+
+# Use field init shorthand if possible
+use_field_init_shorthand = true
+
+# Use try shorthand
+use_try_shorthand = true
+
+# Format strings
+format_strings = true
+
+# Normalize comments
+normalize_comments = true
+
+# Wrap comments
+wrap_comments = true
+comment_width = 100
+
+# Edition
+edition = "2021"

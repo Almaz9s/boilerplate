@@ -1,0 +1,48 @@
+# cargo-deny configuration for supply chain security
+
+[advisories]
+# Deny crates with security vulnerabilities
+vulnerability = "deny"
+# Warn on unmaintained crates
+unmaintained = "warn"
+# Warn on unsound crates
+unsound = "warn"
+# Check for yanked crates
+yanked = "deny"
+# Ignore advisories for specific crates
+ignore = []
+
+[licenses]
+# Allow these licenses
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-DFS-2016",
+]
+# Deny copyleft licenses
+deny = [
+    "GPL-2.0",
+    "GPL-3.0",
+    "AGPL-3.0",
+]
+# Warn on licenses that don't match allow/deny
+confidence-threshold = 0.8
+
+[bans]
+# Deny multiple versions of the same crate
+multiple-versions = "warn"
+# Deny wildcard dependencies
+wildcards = "warn"
+# Highlight crates
+highlight = "all"
+
+[sources]
+# Deny crates from unknown git sources
+unknown-git = "deny"
+# Deny crates from unknown registries
+unknown-registry = "deny"
+# Allow git sources
+allow-git = []

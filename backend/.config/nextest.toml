@@ -1,0 +1,48 @@
+# Nextest configuration for faster, more reliable testing
+# https://nexte.st/book/configuration.html
+
+[profile.default]
+# Don't retry tests by default (fail fast for immediate feedback)
+retries = 0
+
+# Don't stop on first failure - see all issues at once
+fail-fast = false
+
+# Consider a test slow if it takes more than 60 seconds
+slow-timeout = { period = "60s", terminate-after = 2 }
+
+# Number of threads to use for testing (0 = use all cores)
+test-threads = 0
+
+# Show output for failing tests
+failure-output = "immediate-final"
+
+# Show output for passing tests only in verbose mode
+success-output = "never"
+
+[profile.default.junit]
+# Store JUnit XML output for CI integration
+path = "target/nextest/junit.xml"
+
+[profile.ci]
+# CI-specific settings: retry flaky tests
+retries = 2
+
+# Fail fast in CI to save time
+fail-fast = true
+
+# Shorter timeout in CI
+slow-timeout = { period = "30s", terminate-after = 1 }
+
+# Always show output in CI for debugging
+success-output = "immediate"
+failure-output = "immediate"
+
+[profile.ci.junit]
+path = "target/nextest/ci-junit.xml"
+
+[profile.quick]
+# For rapid iteration during development
+retries = 0
+fail-fast = true
+test-threads = 0

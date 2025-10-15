@@ -1,0 +1,8 @@
+---
+source: tests/snapshot_test.rs
+assertion_line: 60
+expression: error_response
+---
+error: User not found
+error_code: NOT_FOUND
+error_id: "[uuid]"

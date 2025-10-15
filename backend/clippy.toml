@@ -1,0 +1,13 @@
+# Clippy configuration for stricter linting
+
+# Warn on missing documentation
+# doc-valid-idents = ["PostgreSQL", "SQLite", "GitHub", "GitLab"]
+
+# Set cognitive complexity threshold
+cognitive-complexity-threshold = 30
+
+# Avoid large error types
+type-complexity-threshold = 500
+
+# Check for too many arguments
+too-many-arguments-threshold = 8
