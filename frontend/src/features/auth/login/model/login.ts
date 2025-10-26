@@ -25,12 +25,12 @@ export const loginFx = createEffect(async (credentials: LoginRequest) => {
   return response
 })
 
-// Stores
-export const $email = createStore('')
+// Stores - Pre-filled with test credentials for development
+export const $email = createStore('logintest@example.com')
   .on(emailChanged, (_, email) => email)
   .reset(formReset)
 
-export const $password = createStore('')
+export const $password = createStore('SecurePass123!')
   .on(passwordChanged, (_, password) => password)
   .reset(formReset)
 

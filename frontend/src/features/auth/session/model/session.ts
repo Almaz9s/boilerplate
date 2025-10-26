@@ -4,22 +4,23 @@
  */
 import { createEffect, createEvent, createStore, sample } from 'effector'
 
+import { appStarted } from '@/app/model'
 import { tokenStorage } from '@/shared/lib/storage'
 
 import { fetchCurrentUserFx, userCleared } from '@/entities/user'
 
 // Events
-export const appStarted = createEvent()
 export const sessionCheckRequested = createEvent()
 
 // Effects
 export const initSessionFx = createEffect(async () => {
   const token = tokenStorage.get()
   if (!token) {
-    throw new Error('No token found')
+    // No token, user is not authenticated - this is a valid state
+    return null
   }
   // Token exists, fetch current user
-  return fetchCurrentUserFx()
+  return await fetchCurrentUserFx()
 })
 
 // Stores
@@ -37,7 +38,7 @@ sample({
   target: initSessionFx,
 })
 
-// Clear user if session init fails
+// Clear user if session init fails (e.g., token invalid, network error)
 sample({
   clock: initSessionFx.fail,
   target: userCleared,
