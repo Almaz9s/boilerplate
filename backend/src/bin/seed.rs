@@ -37,9 +37,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::info!("✓ Database seeded successfully");
     tracing::info!("");
     tracing::info!("Test accounts created:");
-    tracing::info!("  Email: admin@example.com    | Password: 123");
-    tracing::info!("  Email: user@example.com     | Password: 123");
-    tracing::info!("  Email: test@example.com     | Password: 123");
+    tracing::info!("  Email: admin@example.com       | Password: Password123!");
+    tracing::info!("  Email: user@example.com        | Password: Password123!");
+    tracing::info!("  Email: test@example.com        | Password: Password123!");
+    tracing::info!("  Email: logintest@example.com   | Password: SecurePass123!");
     tracing::info!("");
     tracing::info!("Run with --clear to delete existing data before seeding");
 

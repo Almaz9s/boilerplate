@@ -59,20 +59,26 @@ async fn seed_users(pool: &DbPool) -> Result<(), AppError> {
         NewUser {
             email: "admin@example.com".to_string(),
             username: "admin".to_string(),
-            // Hash of "123"
-            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$tJap/+mRGuIZP8fT3qgVxg$qLT+8k+D6eGlhtxqKRnTW1QjppC9Uh/wuCQyKd9nOSA".to_string(),
+            // Hash of "Password123!"
+            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$iXBxD0QgNIoWWchw9QwoUw$3iSquYF7p2H7IeqNeNeUXQtFv49R9OWLPyVYY6+eEUI".to_string(),
         },
         NewUser {
             email: "user@example.com".to_string(),
             username: "user".to_string(),
-            // Hash of "123"
-            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$tJap/+mRGuIZP8fT3qgVxg$qLT+8k+D6eGlhtxqKRnTW1QjppC9Uh/wuCQyKd9nOSA".to_string(),
+            // Hash of "Password123!"
+            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$iXBxD0QgNIoWWchw9QwoUw$3iSquYF7p2H7IeqNeNeUXQtFv49R9OWLPyVYY6+eEUI".to_string(),
         },
         NewUser {
             email: "test@example.com".to_string(),
             username: "testuser".to_string(),
-            // Hash of "123"
-            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$tJap/+mRGuIZP8fT3qgVxg$qLT+8k+D6eGlhtxqKRnTW1QjppC9Uh/wuCQyKd9nOSA".to_string(),
+            // Hash of "Password123!"
+            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$iXBxD0QgNIoWWchw9QwoUw$3iSquYF7p2H7IeqNeNeUXQtFv49R9OWLPyVYY6+eEUI".to_string(),
+        },
+        NewUser {
+            email: "logintest@example.com".to_string(),
+            username: "logintest".to_string(),
+            // Hash of "SecurePass123!"
+            password_hash: "$argon2id$v=19$m=19456,t=2,p=1$cgotbcGnyJLuY9W9yKH2Ow$E5hJaIbdcMT5IsEciC1JJ/1BQK7lZVGBElszRBBL9DQ".to_string(),
         },
     ];
 
