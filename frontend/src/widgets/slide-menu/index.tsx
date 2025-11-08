@@ -19,22 +19,13 @@ interface SlideMenuProps {
 export function SlideMenu({ children }: SlideMenuProps) {
   const [open, setOpen] = React.useState(false)
 
-  // Handle keyboard shortcut Ctrl+` (supports multiple keyboard layouts)
+  // Handle keyboard shortcut Ctrl+` (supports all keyboard layouts via physical key position)
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Ctrl/Cmd modifier
-      if (!(event.metaKey || event.ctrlKey)) {
-        return
-      }
-
-      // Support both physical key code and character values for different layouts
-      const isBackquoteKey =
-        event.code === SLIDE_MENU_KEYBOARD_SHORTCUT || // Physical key position
-        event.key === '`' || // US layout
-        event.key === 'ё' || // Russian layout
-        event.key === 'Ё' // Russian layout with shift
-
-      if (isBackquoteKey) {
+      // Check for Ctrl/Cmd modifier and physical key position
+      // event.code represents the physical key, not the character it produces
+      // This works universally: US layout (`), Russian layout (ё), etc.
+      if ((event.metaKey || event.ctrlKey) && event.code === SLIDE_MENU_KEYBOARD_SHORTCUT) {
         event.preventDefault()
         setOpen((prev) => !prev)
       }
