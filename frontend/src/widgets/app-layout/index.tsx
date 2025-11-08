@@ -1,4 +1,4 @@
-import { Home, LayoutDashboard, LogOut, Menu, Settings, User } from 'lucide-react'
+import { Home, LayoutDashboard, LogOut, Moon, Sun, User } from 'lucide-react'
 import { Link } from 'atomic-router-react'
 import { useUnit } from 'effector-react'
 
@@ -23,6 +23,7 @@ import { routes } from '@/shared/lib/router'
 import { $currentUser } from '@/entities/user/model/user'
 import { logoutTriggered } from '@/features/auth/logout/model/logout'
 import { ThemeToggle } from '@/widgets/theme-toggle'
+import { useTheme } from '@/app/providers/theme-provider'
 
 const navigationItems = [
   {
@@ -42,6 +43,7 @@ const navigationItems = [
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const user = useUnit($currentUser)
   const handleLogout = useUnit(logoutTriggered)
+  const { theme, setTheme } = useTheme()
 
   return (
     <SidebarProvider>
@@ -49,17 +51,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <Link to={routes.home}>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Menu className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Boilerplate App</span>
-                    <span className="truncate text-xs">Dashboard</span>
-                  </div>
-                </Link>
-              </SidebarMenuButton>
+              <div className="flex items-center gap-2">
+                <SidebarTrigger />
+                <div className="group-data-[collapsible=icon]:hidden flex-1">
+                  <Link to={routes.home} className="block">
+                    <div className="grid text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">Boilerplate App</span>
+                      <span className="truncate text-xs">Dashboard</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -79,22 +81,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    tooltip="Toggle Theme"
+                  >
+                    <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span>Theme</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarSeparator />
-
-          <SidebarGroup>
-            <SidebarGroupLabel>Settings</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div className="flex items-center justify-between px-2 py-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Settings className="h-4 w-4" />
-                  <span>Theme</span>
-                </div>
-                <ThemeToggle />
-              </div>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -126,7 +123,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
           <div className="ml-auto">
             <ThemeToggle />
           </div>

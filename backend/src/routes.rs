@@ -45,15 +45,20 @@ pub fn create_router(state: AppState) -> Router {
 
     // Rate limiter for auth endpoints: 10 requests per minute per IP
     // Protects against brute force attacks on login/register
-    let auth_rate_limiter = middleware::rate_limit::RateLimiter::auth(state.config.server.trust_proxy);
-
+    // DISABLED in development builds for easier testing
     let auth_routes = Router::new()
         .route("/register", axum::routing::post(handlers::auth::register))
         .route("/login", axum::routing::post(handlers::auth::login))
-        .route("/me", get(handlers::auth::me))
-        .layer(axum::middleware::from_fn(
+        .route("/me", get(handlers::auth::me));
+
+    // Only apply rate limiting in production builds
+    #[cfg(not(debug_assertions))]
+    let auth_routes = {
+        let auth_rate_limiter = middleware::rate_limit::RateLimiter::auth(state.config.server.trust_proxy);
+        auth_routes.layer(axum::middleware::from_fn(
             middleware::rate_limit::rate_limit_layer(auth_rate_limiter)
-        ));
+        ))
+    };
 
     let api_routes = Router::new()
         .route("/health", get(handlers::health_check))
