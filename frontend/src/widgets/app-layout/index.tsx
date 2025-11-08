@@ -24,6 +24,7 @@ import { $currentUser } from '@/entities/user/model/user'
 import { logoutTriggered } from '@/features/auth/logout/model/logout'
 import { ThemeToggle } from '@/widgets/theme-toggle'
 import { useTheme } from '@/app/providers/theme-provider'
+import { SlideMenu } from '@/widgets/slide-menu'
 
 const navigationItems = [
   {
@@ -131,6 +132,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </SidebarInset>
+
+      <SlideMenu />
     </SidebarProvider>
   )
 }
