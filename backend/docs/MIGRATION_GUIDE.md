@@ -371,7 +371,7 @@ Authorization: Bearer {{authToken}}
 
 ```bash
 # Old: curl script
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:2999/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"pass123"}'
 

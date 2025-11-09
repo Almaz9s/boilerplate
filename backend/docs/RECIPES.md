@@ -291,16 +291,16 @@ RUST_LOG=debug cargo run
 
 ```bash
 # In dev mode
-curl http://localhost:8080/dev/state | jq '.database'
+curl http://localhost:2999/dev/state | jq '.database'
 ```
 
 ### Test Error Responses
 
 ```bash
 # Simulate different errors
-curl http://localhost:8080/dev/error/not_found
-curl http://localhost:8080/dev/error/unauthorized
-curl http://localhost:8080/dev/error/database
+curl http://localhost:2999/dev/error/not_found
+curl http://localhost:2999/dev/error/unauthorized
+curl http://localhost:2999/dev/error/database
 ```
 
 ---
@@ -494,7 +494,7 @@ RUST_LOG=backend::services=debug cargo run
 
 ```http
 # requests.http
-@baseUrl = http://localhost:8080/api/v1
+@baseUrl = http://localhost:2999/api/v1
 
 ### Create Product
 POST {{baseUrl}}/products

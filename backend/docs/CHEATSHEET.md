@@ -34,9 +34,9 @@ just check                  # Format + lint + test
 ## 🛠️ Dev Endpoints (Debug Only)
 
 ```bash
-curl localhost:8080/dev/state              # View app state
-curl -X POST localhost:8080/dev/token      # Generate test JWT
-curl localhost:8080/dev/error/not_found    # Test error handling
+curl localhost:2999/dev/state              # View app state
+curl -X POST localhost:2999/dev/token      # Generate test JWT
+curl localhost:2999/dev/error/not_found    # Test error handling
 ```
 
 ## 📋 API Testing
@@ -133,7 +133,7 @@ state.services.user_repo.find_by_id(id).await?;
 - `docs/DEV_GUIDE.md` - Complete developer guide
 - `docs/IMPROVEMENTS.md` - What changed and why
 - `requests.http` - API examples
-- `http://localhost:8080/swagger-ui` - Interactive API docs
+- `http://localhost:2999/swagger-ui` - Interactive API docs
 
 ## 💡 Pro Tips
 

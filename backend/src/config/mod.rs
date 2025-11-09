@@ -109,7 +109,7 @@ impl Config {
         // Build config from environment variables directly
         let server = ServerConfig {
             host: env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string()),
-            port: Self::env_or("PORT", 8080)?,
+            port: Self::env_or("PORT", 2999)?,
             environment: env::var("ENVIRONMENT").unwrap_or_else(|_| "development".to_string()),
             request_timeout: Self::env_or("REQUEST_TIMEOUT", 30)?,
             trust_proxy: Self::env_or("TRUST_PROXY", false)?,
@@ -159,9 +159,9 @@ impl Config {
         let server = ServerConfig {
             host: env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string()),
             port: env::var("PORT")
-                .unwrap_or_else(|_| "8080".to_string())
+                .unwrap_or_else(|_| "2999".to_string())
                 .parse()
-                .unwrap_or(8080),
+                .unwrap_or(2999),
             environment: env::var("ENVIRONMENT").unwrap_or_else(|_| "development".to_string()),
             request_timeout: env::var("REQUEST_TIMEOUT")
                 .unwrap_or_else(|_| "30".to_string())
@@ -232,7 +232,7 @@ impl Config {
         Config {
             server: ServerConfig {
                 host: "127.0.0.1".to_string(),
-                port: 8080,
+                port: 2999,
                 environment: "development".to_string(),
                 request_timeout: 30,
                 trust_proxy: false,
@@ -248,7 +248,8 @@ impl Config {
             cors: CorsConfig {
                 allowed_origins: vec![
                     "http://localhost:3000".to_string(),
-                    "http://localhost:8080".to_string(),
+                    "http://localhost:5172".to_string(),
+                    "http://localhost:2999".to_string(),
                 ],
             },
         }

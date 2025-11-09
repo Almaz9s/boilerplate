@@ -279,10 +279,10 @@ PORT=8081
 
 ## 📚 Additional Resources
 
-- OpenAPI docs: http://localhost:8080/swagger-ui
-- Metrics: http://localhost:8080/metrics
-- Health check: http://localhost:8080/api/v1/health
-- Dev state: http://localhost:8080/dev/state (debug builds only)
+- OpenAPI docs: http://localhost:2999/swagger-ui
+- Metrics: http://localhost:2999/metrics
+- Health check: http://localhost:2999/api/v1/health
+- Dev state: http://localhost:2999/dev/state (debug builds only)
 
 ## 💡 Tips
 

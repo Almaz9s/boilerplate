@@ -80,7 +80,7 @@ A production-ready Rust backend boilerplate using Axum web framework and Diesel 
 just fresh-start
 ```
 
-Server starts at `http://localhost:8080` with development defaults.
+Server starts at `http://localhost:2999` with development defaults.
 
 ### Traditional Start
 
@@ -115,7 +115,7 @@ Server starts at `http://localhost:8080` with development defaults.
    just run
    ```
 
-The server will start at `http://localhost:8080`.
+The server will start at `http://localhost:2999`.
 
 ## Development
 
@@ -280,7 +280,7 @@ All endpoints include request ID tracing via `x-request-id` header for correlati
 Configuration is managed through environment variables. See `.env.example` for all available options:
 
 - `HOST`: Server host (default: 0.0.0.0)
-- `PORT`: Server port (default: 8080)
+- `PORT`: Server port (default: 2999)
 - `DATABASE_URL`: PostgreSQL connection string
 - `DATABASE_POOL_SIZE`: Connection pool size (default: 10)
 - `JWT_SECRET`: Secret key for JWT signing

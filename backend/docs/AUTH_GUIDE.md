@@ -142,7 +142,7 @@ pub async fn optional_auth_handler(
 
 ### Register a new user:
 ```bash
-curl -X POST http://localhost:8080/api/v1/auth/register \
+curl -X POST http://localhost:2999/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -153,7 +153,7 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
 
 ### Login:
 ```bash
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:2999/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -163,7 +163,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 
 ### Get current user (using token from login response):
 ```bash
-curl -X GET http://localhost:8080/api/v1/auth/me \
+curl -X GET http://localhost:2999/api/v1/auth/me \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 

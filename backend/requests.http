@@ -7,7 +7,7 @@
 # Install: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 ###
 
-@baseUrl = http://localhost:8080
+@baseUrl = http://localhost:2999
 @contentType = application/json
 
 ### Variables (update these after registration/login)
@@ -25,7 +25,7 @@ GET {{baseUrl}}/api/v1/health
 GET {{baseUrl}}/metrics
 
 ### Swagger UI (open in browser)
-# http://localhost:8080/swagger-ui
+# http://localhost:2999/swagger-ui
 
 ###############################################################################
 # Authentication

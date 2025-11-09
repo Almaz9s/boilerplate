@@ -89,7 +89,7 @@ async function apiGet<P extends keyof paths>(
   path: P,
   options?: RequestInit
 ): Promise<paths[P]['get']['responses']['200']['content']['application/json']> {
-  const response = await fetch(`http://localhost:8080${path}`, options);
+  const response = await fetch(`http://localhost:2999${path}`, options);
   return response.json();
 }
 
@@ -225,4 +225,4 @@ Make sure your handlers:
 
 - [utoipa documentation](https://github.com/juhaku/utoipa)
 - [openapi-typescript documentation](https://github.com/drwpow/openapi-typescript)
-- Backend OpenAPI spec available at: `http://localhost:8080/swagger-ui` (when server is running)
+- Backend OpenAPI spec available at: `http://localhost:2999/swagger-ui` (when server is running)

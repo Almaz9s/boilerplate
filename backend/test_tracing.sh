@@ -20,13 +20,13 @@ echo ""
 
 # Test 1: Health check
 echo "1️⃣  Testing health check endpoint..."
-curl -s http://localhost:8080/api/v1/health | jq '.' || echo "Request sent"
+curl -s http://localhost:2999/api/v1/health | jq '.' || echo "Request sent"
 sleep 1
 
 # Test 2: Register user
 echo ""
 echo "2️⃣  Testing user registration..."
-curl -s -X POST http://localhost:8080/api/v1/auth/register \
+curl -s -X POST http://localhost:2999/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -38,7 +38,7 @@ sleep 1
 # Test 3: Login
 echo ""
 echo "3️⃣  Testing user login..."
-TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+TOKEN=$(curl -s -X POST http://localhost:2999/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -51,7 +51,7 @@ sleep 1
 # Test 4: Get current user (authenticated)
 echo ""
 echo "4️⃣  Testing authenticated endpoint..."
-curl -s http://localhost:8080/api/v1/auth/me \
+curl -s http://localhost:2999/api/v1/auth/me \
   -H "Authorization: Bearer $TOKEN" | jq '.' || echo "Request sent"
 
 echo ""
