@@ -53,7 +53,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader className="border-b border-sidebar-border">
           <SidebarMenu>
             <SidebarMenuItem>
-              <div className="flex items-center gap-3 px-2 py-2">
+              <div className="flex items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
                 <SidebarTrigger className="hover:bg-sidebar-accent rounded-md transition-colors" />
                 <div className="group-data-[collapsible=icon]:hidden flex-1">
                   <Link to={routes.home} className="block group">
@@ -73,7 +73,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarContent className="px-2 py-4">
+        <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-2">
           <SidebarGroup>
             <SidebarGroupLabel className="px-2 text-xs font-semibold text-sidebar-foreground/60">
               Navigation
@@ -85,11 +85,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     <SidebarMenuButton
                       asChild
                       tooltip={item.title}
-                      className="group/item transition-all hover:bg-sidebar-accent/80 hover:pl-3 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:shadow-sm"
+                      className="group/item transition-all hover:bg-sidebar-accent/80 hover:pl-3 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:shadow-sm group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center"
                     >
                       <Link to={item.route}>
                         <item.icon className="transition-transform group-hover/item:scale-110" />
-                        <span className="font-medium">{item.title}</span>
+                        <span className="font-medium group-data-[collapsible=icon]:hidden">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -110,13 +110,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <SidebarMenuButton
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                     tooltip="Toggle Theme"
-                    className="group/theme transition-all hover:bg-sidebar-accent/80 hover:pl-3"
+                    className="group/theme transition-all hover:bg-sidebar-accent/80 hover:pl-3 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center"
                   >
                     <div className="relative flex h-4 w-4 items-center justify-center">
                       <Sun className="absolute h-4 w-4 rotate-0 scale-100 transition-all group-hover/theme:rotate-12 dark:-rotate-90 dark:scale-0" />
                       <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all group-hover/theme:-rotate-12 dark:rotate-0 dark:scale-100" />
                     </div>
-                    <span className="font-medium">Theme</span>
+                    <span className="font-medium group-data-[collapsible=icon]:hidden">Theme</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -124,20 +124,28 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="mt-auto border-t border-sidebar-border p-2">
+        <SidebarFooter className="mt-auto border-t border-sidebar-border">
           {user && (
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   size="lg"
-                  className="group/user data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/80 transition-all"
+                  tooltip={{
+                    children: (
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-semibold">{user.username}</span>
+                        <span className="text-xs text-muted-foreground">{user.email}</span>
+                      </div>
+                    ),
+                  }}
+                  className="group/user data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/80 transition-all group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center"
                 >
                   <Avatar className="h-8 w-8 rounded-lg border-2 border-sidebar-border transition-transform group-hover/user:scale-105">
                     <AvatarFallback className="rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 text-xs font-semibold">
                       {user.username.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                     <span className="truncate font-semibold">{user.username}</span>
                     <span className="truncate text-xs text-sidebar-foreground/60">{user.email}</span>
                   </div>
@@ -147,10 +155,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <SidebarMenuButton
                   onClick={() => handleLogout()}
                   tooltip="Logout"
-                  className="group/logout hover:bg-destructive/10 hover:text-destructive transition-all hover:pl-3"
+                  className="group/logout hover:bg-destructive/10 hover:text-destructive transition-all hover:pl-3 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center"
                 >
                   <LogOut className="transition-transform group-hover/logout:translate-x-0.5" />
-                  <span className="font-medium">Logout</span>
+                  <span className="font-medium group-data-[collapsible=icon]:hidden">Logout</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
