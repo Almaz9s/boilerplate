@@ -55,6 +55,12 @@ Full-stack web application boilerplate with modern architecture and best practic
 └── docs/            # Project documentation
 ```
 
+## Port Configuration
+
+- **Frontend**: `17102`
+- **Backend**: `17202`
+- **Postgres**: `17302`
+
 ## Getting Started
 
 See individual README files in `backend/` and `frontend/` directories for detailed setup instructions.
