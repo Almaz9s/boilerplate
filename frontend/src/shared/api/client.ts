@@ -3,6 +3,7 @@
  * Centralized HTTP client with interceptors and error handling
  */
 import { config } from '../config'
+import { unauthorizedReceived } from '../lib/auth-events'
 import { tokenStorage } from '../lib/storage'
 import type { ApiError } from '../types'
 
@@ -45,6 +46,11 @@ class ApiClient {
         error.details = errorData
       } catch {
         // If response is not JSON, use statusText
+      }
+
+      // Handle 401 Unauthorized globally - token expired or invalid
+      if (response.status === 401) {
+        unauthorizedReceived()
       }
 
       throw error

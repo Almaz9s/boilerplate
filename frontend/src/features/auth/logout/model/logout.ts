@@ -26,14 +26,14 @@ sample({
   target: logoutFx,
 })
 
-// Clear user entity on logout
+// Clear user entity on logout (use .finally to ensure cleanup even on errors)
 sample({
-  clock: logoutFx.done,
+  clock: logoutFx.finally,
   target: userCleared,
 })
 
-// Redirect to login after logout
+// Redirect to login after logout (use .finally to ensure redirect even on errors)
 sample({
-  clock: logoutFx.done,
+  clock: logoutFx.finally,
   target: routes.login.open,
 })

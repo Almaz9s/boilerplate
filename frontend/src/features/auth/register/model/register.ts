@@ -5,6 +5,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector'
 
 import { authApi } from '@/shared/api'
+import { isDevelopment } from '@/shared/config'
 import { routes } from '@/shared/lib/router'
 import { tokenStorage } from '@/shared/lib/storage'
 import type { ApiError, RegisterRequest } from '@/shared/types'
@@ -26,16 +27,16 @@ export const registerFx = createEffect(async (data: RegisterRequest) => {
   return response
 })
 
-// Stores - Pre-filled with test credentials for development
-export const $email = createStore('newuser@example.com')
+// Stores - Pre-filled with test credentials only in development
+export const $email = createStore(isDevelopment ? 'newuser@example.com' : '')
   .on(emailChanged, (_, email) => email)
   .reset(formReset)
 
-export const $username = createStore('newuser')
+export const $username = createStore(isDevelopment ? 'newuser' : '')
   .on(usernameChanged, (_, username) => username)
   .reset(formReset)
 
-export const $password = createStore('SecurePass123!')
+export const $password = createStore(isDevelopment ? 'SecurePass123!' : '')
   .on(passwordChanged, (_, password) => password)
   .reset(formReset)
 
@@ -103,14 +104,14 @@ sample({
   target: userUpdated,
 })
 
-// Reset form on success
-sample({
-  clock: registerFx.done,
-  target: formReset,
-})
-
 // Redirect to home after successful registration
 sample({
   clock: registerFx.done,
   target: routes.home.open,
+})
+
+// Reset form when navigating to register page (cleaner than resetting after success)
+sample({
+  clock: routes.register.opened,
+  target: formReset,
 })

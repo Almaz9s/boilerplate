@@ -5,6 +5,8 @@
 import { createEffect, createEvent, createStore, sample } from 'effector'
 
 import { appStarted } from '@/app/model'
+import { unauthorizedReceived } from '@/shared/lib/auth-events'
+import { routes } from '@/shared/lib/router'
 import { tokenStorage } from '@/shared/lib/storage'
 
 import { fetchCurrentUserFx, userCleared } from '@/entities/user'
@@ -23,6 +25,11 @@ export const initSessionFx = createEffect(async () => {
   return await fetchCurrentUserFx()
 })
 
+// Effect to clear invalid token from storage
+export const clearInvalidTokenFx = createEffect(() => {
+  tokenStorage.remove()
+})
+
 // Stores
 export const $sessionInitialized = createStore(false).on(initSessionFx.finally, () => true)
 
@@ -38,11 +45,23 @@ sample({
   target: initSessionFx,
 })
 
-// Clear user if session init fails (e.g., token invalid, network error)
+// Clear user and token if session init fails (e.g., token expired/invalid)
 sample({
   clock: initSessionFx.fail,
-  target: userCleared,
+  target: [userCleared, clearInvalidTokenFx],
 })
 
 // Navigation is handled by router guards - no manual redirects needed
 // Router guards will redirect unauthenticated users to login automatically
+
+// Handle global 401 unauthorized responses (e.g., token expired during session)
+// Clear token and user, then redirect to login
+sample({
+  clock: unauthorizedReceived,
+  target: [clearInvalidTokenFx, userCleared],
+})
+
+sample({
+  clock: unauthorizedReceived,
+  target: routes.login.open,
+})

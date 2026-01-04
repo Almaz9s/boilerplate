@@ -5,6 +5,7 @@
 import { createEffect, createEvent, createStore, sample } from 'effector'
 
 import { authApi } from '@/shared/api'
+import { isDevelopment } from '@/shared/config'
 import { routes } from '@/shared/lib/router'
 import { tokenStorage } from '@/shared/lib/storage'
 import type { ApiError, LoginRequest } from '@/shared/types'
@@ -25,12 +26,12 @@ export const loginFx = createEffect(async (credentials: LoginRequest) => {
   return response
 })
 
-// Stores - Pre-filled with test credentials for development
-export const $email = createStore('logintest@example.com')
+// Stores - Pre-filled with test credentials only in development
+export const $email = createStore(isDevelopment ? 'logintest@example.com' : '')
   .on(emailChanged, (_, email) => email)
   .reset(formReset)
 
-export const $password = createStore('SecurePass123!')
+export const $password = createStore(isDevelopment ? 'SecurePass123!' : '')
   .on(passwordChanged, (_, password) => password)
   .reset(formReset)
 
@@ -73,15 +74,15 @@ sample({
   target: userUpdated,
 })
 
-// Reset form on success
-sample({
-  clock: loginFx.done,
-  target: formReset,
-})
-
 // Redirect to home after successful login
 sample({
   clock: loginFx.done,
   fn: () => {},
   target: routes.home.open,
+})
+
+// Reset form when navigating to login page (cleaner than resetting after success)
+sample({
+  clock: routes.login.opened,
+  target: formReset,
 })
