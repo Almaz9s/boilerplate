@@ -257,10 +257,16 @@ impl Config {
 
     /// Create a default test configuration
     /// Available for integration tests
+    ///
+    /// IMPORTANT: this **must never** point at the real dev DB. Tests freely
+    /// INSERT/UPDATE/DELETE, so the default URL is the isolated test database
+    /// (`backend_db_test`). We deliberately do **not** read `DATABASE_URL`
+    /// here — that previously let integration tests pollute the dev DB. To
+    /// override the test DB, set `TEST_DATABASE_URL`.
     pub fn default_test_config() -> Self {
-        // Try to read database URL from environment, fallback to default
-        let database_url = env::var("DATABASE_URL")
-            .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5431/backend_db".to_string());
+        let database_url = env::var("TEST_DATABASE_URL").unwrap_or_else(|_| {
+            "postgres://postgres:postgres@localhost:17302/backend_db_test".to_string()
+        });
 
         Config {
             server: ServerConfig {

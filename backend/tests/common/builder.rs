@@ -28,10 +28,14 @@ impl TestStateBuilder {
                     port: 0,
                     environment: "test".to_string(),
                     request_timeout: 10,
+                    trust_proxy: false,
                 },
                 database: DatabaseConfig {
-                    url: std::env::var("TEST_DATABASE_URL")
-                        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/test".to_string()),
+                    // Always an isolated test DB — never the real dev DB. See
+                    // `common::DEFAULT_TEST_DATABASE_URL`.
+                    url: std::env::var("TEST_DATABASE_URL").unwrap_or_else(|_| {
+                        "postgres://postgres:postgres@localhost:17302/backend_db_test".to_string()
+                    }),
                     pool_size: 2,
                 },
                 jwt: JwtConfig {

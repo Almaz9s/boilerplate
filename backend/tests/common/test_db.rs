@@ -93,9 +93,10 @@ where
 {
     use diesel_async::AsyncConnection;
 
-    // Get test database URL from env or use default
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/backend_test".to_string());
+    // Always an isolated test DB (`backend_db_test`), never the real dev DB.
+    // Bootstrap it (create + migrate) on first use so this works standalone.
+    let database_url = super::test_database_url();
+    super::bootstrap_test_db_once(&database_url);
 
     let pool = db::create_pool(&database_url, 1)
         .expect("Failed to create test pool");
@@ -133,8 +134,9 @@ where
 /// ```
 #[allow(dead_code)]
 pub fn get_test_pool() -> backend::db::DbPool {
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/backend_test".to_string());
+    // Always an isolated test DB (`backend_db_test`), never the real dev DB.
+    let database_url = super::test_database_url();
+    super::bootstrap_test_db_once(&database_url);
 
     db::create_pool(&database_url, 5)
         .expect("Failed to create test pool")
